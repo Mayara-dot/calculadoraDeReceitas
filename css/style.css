@@ -1,7 +1,7 @@
 * {
     margin: 0;
     padding: 0;
-    background-color: white;
+    background-color: rgba(247, 239, 229, 0.144);
     font-family: 'EB Garamond', 'Square Peg', cursive, 'Uchen', serif;
 }
 
@@ -16,31 +16,61 @@ header p {
 }
 
 form {
-    columns: 2;
+    width: fit-content;
+    columns: 3;    
+}
+
+form, .container {
+    border: solid 0.5px gray;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 45px 15px rgb(168, 130, 85);
+
 }
 
 form label {
+    font-family: 'Square Peg', serif;
     display:block;
-    font-size: 24px;
-    margin-top: 1rem;
+    font-size: 34px;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.container, .container p {
+    font-family: 'EB Garamond', serif;
+    font-size:large;
+    padding: 5px;
+}
+
+.container {
+    width: 80%;
 }
 
 form select {
     padding: 5px;
     font-size: 18px;
+    margin-bottom: 5px;
 }
 
 form button {
     padding: 7px;
-    margin: 2rem 1rem;
+    margin: 1.5rem 1rem;
     font-size: 20px;
     border-radius: 5px;
-    border-color: palevioletred;
+    border-color: rgb(168, 130, 85);;
     cursor: pointer;
     transition-duration: 0.4s;
 }
 
 button:hover {
-    background-color: #c0afbd; /* Green */
+    background-color: rgb(168, 130, 85);
     color: white;
+}
+
+span {
+    text-decoration: underline;
+    font-weight: bold;
+    text-transform: uppercase;
 }

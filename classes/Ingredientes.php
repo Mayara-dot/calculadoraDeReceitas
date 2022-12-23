@@ -2,51 +2,50 @@
 require_once "Medidas.php";
 
 class Ingredientes extends Medidas{
-    var $ingrediente; 
 
-    public function __construct() {
+    var $ingrediente;
+    var $label;
+    public function __construct($ingrediente = "agua") {
         //em ML
-        $this->setIngrediente("agua");
+        $this->setIngrediente($ingrediente);
         $this->setXicara(250);
         $this->setColherDeCha(5);
         $this->setColherDeSopa(15);
     }
-
     public function setIngrediente($ingrediente) {
         $this->ingrediente = $ingrediente;
     }
     public function getIngrediente() {
         return $this->ingrediente;
     }
-    
     public function dicionario($ingrediente) {
         switch($ingrediente) {
             //EM GRAMAS
-            case "farinha de trigo": 
+            case "farinhaDeTrigo": 
                 $this->setXicara(150);
                 $this->setColherDeSopa(9.4);
                 break;
-            case "acucar cristal/demerara":
+            case "acucarCristalDemerara":
                 $this->setXicara(200);
                 $this->setColherDeSopa(12.5);
                 break;
-            case "acucar refinado":
+            case "acucarRefinado":
                 $this->setXicara(225);
                 $this->setColherDeSopa(15);
                 break;
-            case "cacau em po":
+            case "cacauEmPo":
                 $this->setXicara(120);
                 break;
-            case "fermento em po":
+            case "fermento":
                 $this->setColherDeCha(3);
                 break;
-            case "bicarbonato de sodio":
+            case "bicarbonato":
                 $this->setColherDeCha(5);
                 break;
             case "sal":
                 $this->setColherDeCha(5);
                 break;
-            case "oleo vegetal":
+            case "oleoVegetal":
                 $this->setXicara(205);
                 break;
             default:  //"agua"
@@ -56,71 +55,285 @@ class Ingredientes extends Medidas{
                 break;
         }
     }
-
-    public function medir($medida, $tipo = null, $ingredientes = "agua") {
+    public function label($ingrediente){
+        $rs = include "../php/data.php";
+        $solidos = $rs[0];
+        $liquidos = $rs[1];
+        foreach($solidos as $k => $v) {
+            if($ingrediente == $k) {
+                return $v;
+            } else {
+                continue;
+            }
+        }
+        foreach($liquidos as $k => $v) {
+            if($ingrediente == $k) {
+                return $v;
+            } else {
+                continue;
+            }
+        }
+    }
+    public function medida($medida) {
+        $rs = include "../php/data.php";
+        $medidas = $rs[2];
+        foreach($medidas as $k => $v) {
+            if($medida == $k) {
+                return $v;
+            } else {
+                continue;
+            }
+        }
+    }
+    public function gramas($quantidade, $unidadeMedida = null, $ingredientes = "agua") {
         try {
             $this->setIngrediente($this->dicionario($ingredientes));
-            if($medida == 1) {
-                if($tipo == "xicara") {
-                    echo "<p>1 xicara de $ingredientes = {$this->getXicara()} g</p>";
-                } else if($tipo == "colher de sopa") {
-                    echo "<p>1 colher de sopa de $ingredientes = {$this->getColherDeSopa()} g</p>";
-                } else if ($tipo == "colher de cha") {
-                    echo "<p>1 colher de chá de $ingredientes = {$this->getColherDeCha()} g</p>";
+            $label = $this->label($ingredientes);
+            $medida = $this->medida($unidadeMedida);
+            if($quantidade == '1') {
+                if($unidadeMedida == "xicara") {
+                    echo "<p>1 $medida de $label = {$this->getXicara()} g</p>";
+                } else if($unidadeMedida == "colCS") {
+                    echo "<p>1 $medida de $label = {$this->getColherDeSopa()} g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    echo "<p>1 $medida de $label = {$this->getColherDeCha()} g</p>";
                 } else {
                     echo "ERRO";
                 }
-
-            }else if($medida == 1/2) {
-                if($tipo == "xicara") {
+            }else if($quantidade == '1/2') {
+                if($unidadeMedida == "xicara") {
                     $meiaXic = round($this->getXicara() / 2, 1);
-                    echo "<p>1/2 xícara de $ingredientes = $meiaXic g</p>";
-                } else if($tipo == "colher de sopa") {
+                    echo "<p>1/2 $medida de $label = $meiaXic g</p>";
+                } else if($unidadeMedida == "colCS") {
                     $meiaCS = round($this->getColherDeSopa() / 2, 1);
-                    echo "<p>1/2 colher de sopa de $ingredientes = $meiaCS g</p>";
-                } else if($tipo == "colher de cha"){
+                    echo "<p>1/2 $medida de $label = $meiaCS g</p>";
+                } else if($unidadeMedida == "colCC"){
                     $meiaCC = round($this->getColherDeCha() / 2, 1);
-                    echo "<p>1/2 colher de chá de $ingredientes = $meiaCC g</p>";
+                    echo "<p>1/2 $medida de $label = $meiaCC g</p>";
                 } else {
                     echo "<p>ERRO METADE</p>";
                 }
-
-            } else  if ($medida == 1/3) {
+            } else  if ($quantidade == '1/3') {
                 $umTercoXic = round($this->getXicara() / 3);
-                echo "<p>1/3 de xicara de $ingredientes = $umTercoXic g</p>";
-
-            } else if ($medida == 1/4) {
+                echo "<p>1/3 de $medida de $label = $umTercoXic g</p>";
+            } else if ($quantidade == '1/4') {
                 $umQuartoXic = round($this->getXicara() / 4);
-                echo "<p>1/4 de xícara de $ingredientes = $umQuartoXic g</p>";
-
-            } else if ($medida == 3/4){
+                echo "<p>1/4 de $medida de $label = $umQuartoXic g</p>";
+            } else if ($quantidade == '3/4'){
                 $tresQuartos = round(($this->getXicara() / 4) * 3);
-                echo "<p>3/4 de xícara de $ingredientes = $tresQuartos g</p>";
-
-            } else if($medida > 1) {
-                if($tipo == "xicara") {
-                    $mult = ($this->getXicara() * $medida);
-                    echo "<p>$medida xícaras de $ingredientes = $mult g</p>";
-                } else if ($tipo == "colher de sopa") {
-                    $mult = ($this->getColherDeSopa() * $medida);
-                    echo "<p>$medida colheres de sopa de $ingredientes = $mult g</p>";
-                } else if ($tipo == "colher de cha") {
-                    $mult = ($this->getColherDeCha() * $medida);
-                    echo "<p>$medida colheres de cha de $ingredientes = $mult g</p>";
-
+                echo "<p>3/4 de $medida de $label = $tresQuartos g</p>";
+            } else if($quantidade > '1') {
+                if($unidadeMedida == "xicara") {
+                    $mult = ($this->getXicara() * $quantidade);
+                    echo "<p>$quantidade xícaras de $label = $mult g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $mult = ($this->getColherDeSopa() * $quantidade);
+                    echo "<p>$quantidade colheres de sopa de $label = $mult g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $mult = ($this->getColherDeCha() * $quantidade);
+                    echo "<p>$quantidade colheres de cha de $label = $mult g</p>";
                 } else {
                     echo "<p>ERRO MAIS DE UM</p>";
                 }
             }
-            
             else {
-                echo "<p>ERRO MEDIDAS</p>";
+                echo "<p>$label = 0 g</p>";
             }
-
         } catch (\Throwable $th) {
             throw $th;
         }
-        
+    }
+    public function metade($quantidade, $unidadeMedida = null, $ingredientes = "agua") {
+        try {
+            $this->setIngrediente($this->dicionario($ingredientes));
+            $label = $this->label($ingredientes);
+            $medida = $this->medida($unidadeMedida);
+            if($quantidade === 1) {
+                if($unidadeMedida == "xicara") {
+                    $meiaXic = round($this->getXicara() / 2, 1);
+                    echo "<p>1/2 $medida de $label = $meiaXic g</p>";
+                } else if($unidadeMedida == "colCS") {
+                    $meiaCS = round($this->getColherDeSopa() / 2, 1);
+                    echo "<p>1/2 $medida de $label = $meiaCS g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $meiaCC = round($this->getColherDeCha() / 2, 1);
+                    echo "<p> 1/2 $medida de $label = $meiaCC g</p>";
+                } else {
+                    echo "ERRO";
+                }
+            }else if($quantidade === '1/2') {
+                if($unidadeMedida == "xicara") {
+                    $umQuartoXic = round($this->getXicara() / 4);
+                    echo "<p>1/4 de $medida de $label = $umQuartoXic g</p>";
+                } else if($unidadeMedida == "colCS") {
+                    $umQuartoCS = round($this->getColherDeSopa() / 4);
+                    echo "<p>1/4 de $medida de $label = $umQuartoCS g</p>";
+                } else if($unidadeMedida == "colCC"){
+                    $umQuartoCC = round($this->getColherDeCha() / 4);
+                    echo "<p>1/4 de $medida de $label = $umQuartoCC g</p>";
+                } else {
+                    echo "<p>ERRO METADE</p>";
+                }
+            } else  if ($quantidade === '1/3') {
+                $umTercoXic = round($this->getXicara() / 3);
+                $metade = round($umTercoXic / 2);
+                echo "<p>$label = $metade g</p>";
+            } else if ($quantidade == '1/4') {
+                $umQuartoXic = round($this->getXicara() / 4);
+                $metade = round($umQuartoXic / 2);
+                echo "<p>$label = $metade g</p>";
+            } else if ($quantidade == '3/4'){
+                $tresQuartos = round(($this->getXicara() / 4) * 3);
+                $metade = round($tresQuartos / 2);
+                echo "<p>$label = $metade g</p>";
+            } else if($quantidade > 1) {
+                if($unidadeMedida == "xicara") {
+                    $mult = round((($this->getXicara() * $quantidade) / 2));
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $mult = round((($this->getColherDeSopa() * $quantidade) / 2));
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $mult = round((($this->getColherDeCha() * $quantidade) / 2));
+                    echo "<p>$label = $mult g</p>";
+                } else {
+                    echo "<p>ERRO MAIS DE UM</p>";
+                }
+            }
+            else {
+                echo "<p>$label = 0 g</p>";
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    public function dobro($quantidade, $unidadeMedida = null, $ingredientes = "agua") {
+        try {
+            $this->setIngrediente($this->dicionario($ingredientes));
+            $label = $this->label($ingredientes);
+            $medida = $this->medida($unidadeMedida);
+            if ($quantidade == '1') {
+                if ($unidadeMedida == "xicara") {
+                    $dobro = round($this->getXicara() * 2);
+                    echo "<p>2 $medida de $label = {$dobro} g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $dobro = round($this->getColherDeSopa() * 2);
+                    echo "<p>2 $medida de $label = {$dobro} g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $dobro = round($this->getColherDeCha() * 2);
+                    echo "<p>2 $medida de $label = {$dobro} g</p>";
+                } else {
+                    echo "ERRO";
+                }
+            }else if($quantidade === '1/2') {
+                if($unidadeMedida == "xicara") {
+                    echo "<p>1 $medida de $label = {$this->getXicara()} g</p>";
+                } else if($unidadeMedida == "colCS") {
+                    echo "<p>1 $medida de $label = {$this->getColherDeSopa()} g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    echo "<p>1 $medida de $label = {$this->getColherDeCha()} g</p>";
+                } else {
+                    echo "ERRO";
+                }
+            } else  if ($quantidade === '1/3') {
+                $umTercoXic = round($this->getXicara() / 3);
+                $dobro = round($umTercoXic * 2);
+                echo "<p>$label = $dobro g</p>";
+            } else if ($quantidade == '1/4') {
+                $umQuartoXic = round($this->getXicara() / 4);
+                $dobro = round($umQuartoXic * 2);
+                echo "<p>$label = $dobro g</p>";
+            } else if ($quantidade == '3/4'){
+                $tresQuartos = round(($this->getXicara() / 4) * 3);
+                $dobro = round($tresQuartos * 2);
+                echo "<p>$label = $dobro g</p>";
+
+            } else if($quantidade > 1) {
+                if($unidadeMedida == "xicara") {
+                    $mult = round(($this->getXicara() * $quantidade) * 2);
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $mult = round(($this->getColherDeSopa() * $quantidade) * 2);
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $mult = round(($this->getColherDeCha() * $quantidade) * 2);
+                    echo "<p>$label = $mult g</p>";
+                } else {
+                    echo "<p>ERRO MAIS DE UM</p>";
+                }
+            }
+            else {
+                echo "<p>$label = 0 g</p>";
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    public function triplo($quantidade, $unidadeMedida = null, $ingredientes = "agua") {
+        try {
+            $this->setIngrediente($this->dicionario($ingredientes));
+            $label = $this->label($ingredientes);
+            $medida = $this->medida($unidadeMedida);
+            if ($quantidade == '1') {
+                if ($unidadeMedida == "xicara") {
+                    $triplo = round($this->getXicara() * 3);
+                    echo "<p>3 $medida de $label = {$triplo} g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $triplo = round($this->getColherDeSopa() * 3);
+                    echo "<p>3 $medida de $label = {$triplo} g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $triplo = round($this->getColherDeCha() * 3);
+                    echo "<p>3 $medida de $label = {$triplo} g</p>";
+                } else {
+                    echo "ERRO";
+                }
+            }else if($quantidade === '1/2') {
+                if($unidadeMedida == "xicara") {
+                    $triplo = (round($this->getXicara() / 2)) + $this->getXicara();
+                    echo "<p>1 e 1/2 $medida de $label = {$triplo} g</p>";
+                } else if($unidadeMedida == "colCS") {
+                    $triplo = (round($this->getColherDeSopa() / 2)) + $this->getColherDeSopa();
+                    echo "<p>1 e 1/2 $medida de $label = {$triplo} g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $triplo = (round($this->getColherDeCha() / 2)) + $this->getColherDeCha();
+                    echo "<p>1 e 1/2 $medida de $label = {$triplo} g</p>";
+                } else {
+                    echo "ERRO";
+                }
+            } else  if ($quantidade === '1/3') {
+                $umTercoXic = round($this->getXicara() / 3);
+                $dobro = round($umTercoXic * 3);
+                echo "<p>$label = $dobro g</p>";
+            } else if ($quantidade == '1/4') {
+                $umQuartoXic = round($this->getXicara() / 4);
+                $dobro = round($umQuartoXic * 3);
+                echo "<p>$label = $dobro g</p>";
+            } else if ($quantidade == '3/4'){
+                $tresQuartos = round(($this->getXicara() / 4) * 3);
+                $dobro = round($tresQuartos * 3);
+                echo "<p>$label = $dobro g</p>";
+
+            } else if($quantidade > 1) {
+                if($unidadeMedida == "xicara") {
+                    $mult = round(($this->getXicara() * $quantidade) * 3);
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCS") {
+                    $mult = round(($this->getColherDeSopa() * $quantidade) * 3);
+                    echo "<p>$label = $mult g</p>";
+                } else if ($unidadeMedida == "colCC") {
+                    $mult = round(($this->getColherDeCha() * $quantidade) * 3);
+                    echo "<p>$label = $mult g</p>";
+                } else {
+                    echo "<p>ERRO MAIS DE UM</p>";
+                }
+            }
+            else {
+                echo "<p>$label = 0 g</p>";
+
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
  
